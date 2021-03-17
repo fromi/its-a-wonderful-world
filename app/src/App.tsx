@@ -4,7 +4,7 @@ import GameView from '@gamepark/its-a-wonderful-world/GameView'
 import EmpireName from '@gamepark/its-a-wonderful-world/material/EmpireName'
 import Resource from '@gamepark/its-a-wonderful-world/material/Resource'
 import Move from '@gamepark/its-a-wonderful-world/moves/Move'
-import {tellYourAreReady} from '@gamepark/its-a-wonderful-world/moves/TellYouAreReady'
+import MoveType from '@gamepark/its-a-wonderful-world/moves/MoveType'
 import Phase from '@gamepark/its-a-wonderful-world/Phase'
 import {canBuild, getPlayer, numberOfRounds} from '@gamepark/its-a-wonderful-world/Rules'
 import {isPlayer} from '@gamepark/its-a-wonderful-world/typeguards'
@@ -59,14 +59,14 @@ const App: FunctionComponent = () => {
       if (player && isPlayer(player) && willEndGame && player.constructionArea.some(construction => canBuild(player, construction.card))) {
         setConfirmPopup(true)
       } else {
-        play(tellYourAreReady(playerId))
+        play({type: MoveType.TellYouAreReady, playerId})
       }
     }
   }
   const confirm = () => {
     if (!playerId) return
     setConfirmPopup(false)
-    play(tellYourAreReady(playerId))
+    play({type: MoveType.TellYouAreReady, playerId})
   }
   return (
     <DndProvider options={HTML5ToTouch}>

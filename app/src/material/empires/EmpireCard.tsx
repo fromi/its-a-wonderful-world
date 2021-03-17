@@ -3,7 +3,7 @@ import {css} from '@emotion/react'
 import EmpireName from '@gamepark/its-a-wonderful-world/material/EmpireName'
 import EmpireSide from '@gamepark/its-a-wonderful-world/material/EmpireSide'
 import Resource from '@gamepark/its-a-wonderful-world/material/Resource'
-import {placeResource} from '@gamepark/its-a-wonderful-world/moves/PlaceResource'
+import MoveType from '@gamepark/its-a-wonderful-world/moves/MoveType'
 import Player from '@gamepark/its-a-wonderful-world/Player'
 import PlayerView from '@gamepark/its-a-wonderful-world/PlayerView'
 import {getPlayerName} from '@gamepark/its-a-wonderful-world/Rules'
@@ -65,7 +65,7 @@ const EmpireCard: FunctionComponent<Props> = ({player, gameOver = false, withRes
       isValidTarget: monitor.getItemType() === DragObjectType.RESOURCE_FROM_BOARD,
       isOver: monitor.isOver()
     }),
-    drop: (item: ResourceFromBoard) => play(placeResource(player.empire, item.resource))
+    drop: (item: ResourceFromBoard) => play({type: MoveType.PlaceResource, playerId: player.empire, resource: item.resource})
   })
   return (
     <div ref={ref} {...props} css={[style, getBackgroundImage(player.empire, player.empireSide), isValidTarget && validTargetStyle, isOver && overStyle]}>

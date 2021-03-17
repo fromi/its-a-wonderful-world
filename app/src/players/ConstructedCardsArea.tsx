@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import {css} from '@emotion/react'
 import {developmentCards} from '@gamepark/its-a-wonderful-world/material/Developments'
-import {completeConstruction} from '@gamepark/its-a-wonderful-world/moves/CompleteConstruction'
+import MoveType from '@gamepark/its-a-wonderful-world/moves/MoveType'
 import Player from '@gamepark/its-a-wonderful-world/Player'
 import PlayerView from '@gamepark/its-a-wonderful-world/PlayerView'
 import {canBuild, canPay, getCost} from '@gamepark/its-a-wonderful-world/Rules'
@@ -33,7 +33,9 @@ const ConstructedCardsArea: FunctionComponent<{ player: Player | PlayerView }> =
         && canDrop(monitor.getItem()),
       isOver: monitor.isOver()
     }),
-    drop: (item: DevelopmentFromConstructionArea | DevelopmentFromDraftArea) => completeConstruction(player.empire, item.card)
+    drop: (item: DevelopmentFromConstructionArea | DevelopmentFromDraftArea) => ({
+      type: MoveType.CompleteConstruction, playerId: player.empire, card: item.card
+    })
   })
 
   return (

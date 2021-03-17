@@ -17,5 +17,8 @@
   },
   "scripts": {
     "build": "tsc"
+  },
+  "devDependencies": {
+    "i18next": "^19.9.2"
   }
 }

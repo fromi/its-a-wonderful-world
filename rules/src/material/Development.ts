@@ -19,3 +19,7 @@ export type ConstructionBonus = Character | Resource.Krystallium
 export function isConstructionBonus(item: any): item is ConstructionBonus {
   return isCharacter(item) || item === Resource.Krystallium
 }
+
+export function totalCost(development: Development) {
+  return Object.values(development.constructionCost).reduce<number>((sum, cost) => cost ? sum + cost : sum, 0)
+}

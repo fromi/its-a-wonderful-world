@@ -1,20 +1,22 @@
 /** @jsxImportSource @emotion/react */
 import {css} from '@emotion/react'
 import GameView from '@gamepark/its-a-wonderful-world/GameView'
+import ItsAWonderfulWorldView from '@gamepark/its-a-wonderful-world/ItsAWonderfulWorldView'
 import Character from '@gamepark/its-a-wonderful-world/material/Character'
 import Construction from '@gamepark/its-a-wonderful-world/material/Construction'
 import {developmentCards} from '@gamepark/its-a-wonderful-world/material/Developments'
 import EmpireName from '@gamepark/its-a-wonderful-world/material/EmpireName'
 import Resource, {isResource} from '@gamepark/its-a-wonderful-world/material/Resource'
 import CompleteConstruction, {isCompleteConstruction} from '@gamepark/its-a-wonderful-world/moves/CompleteConstruction'
-import PlaceCharacter, {placeCharacter} from '@gamepark/its-a-wonderful-world/moves/PlaceCharacter'
-import {isPlaceResource, placeResource, PlaceResourceOnConstruction} from '@gamepark/its-a-wonderful-world/moves/PlaceResource'
-import Recycle, {isRecycle, recycle} from '@gamepark/its-a-wonderful-world/moves/Recycle'
-import SlateForConstruction, {isSlateForConstruction, slateForConstruction} from '@gamepark/its-a-wonderful-world/moves/SlateForConstruction'
+import MoveType from '@gamepark/its-a-wonderful-world/moves/MoveType'
+import PlaceCharacter from '@gamepark/its-a-wonderful-world/moves/PlaceCharacter'
+import {isPlaceResource, PlaceResourceOnConstruction} from '@gamepark/its-a-wonderful-world/moves/PlaceResource'
+import Recycle, {isRecycle} from '@gamepark/its-a-wonderful-world/moves/Recycle'
+import SlateForConstruction, {isSlateForConstruction} from '@gamepark/its-a-wonderful-world/moves/SlateForConstruction'
 import Phase from '@gamepark/its-a-wonderful-world/Phase'
 import Player from '@gamepark/its-a-wonderful-world/Player'
 import PlayerView from '@gamepark/its-a-wonderful-world/PlayerView'
-import Rules, {canBuild, getMovesToBuild, getRemainingCost, placeAvailableCubesMoves} from '@gamepark/its-a-wonderful-world/Rules'
+import {canBuild, getMovesToBuild, getRemainingCost, placeAvailableCubesMoves} from '@gamepark/its-a-wonderful-world/Rules'
 import {isPlayer} from '@gamepark/its-a-wonderful-world/typeguards'
 import {useAnimation, usePlay, usePlayerId, useUndo} from '@gamepark/react-client'
 import {FunctionComponent, useEffect, useRef, useState} from 'react'
@@ -43,7 +45,7 @@ const ConstructionArea: FunctionComponent<{ game: GameView, gameOver: boolean, p
   const row = game.phase === Phase.Draft ? 2 : 1
   const fullWidth = game.players.length === 2 && game.phase !== Phase.Draft
   const play = usePlay()
-  const [undo, canUndo] = useUndo(Rules)
+  const [undo, canUndo] = useUndo(ItsAWonderfulWorldView)
   const animation = useAnimation<CompleteConstruction | Recycle | SlateForConstruction>(animation =>
     (isCompleteConstruction(animation.move) || isRecycle(animation.move) || isSlateForConstruction(animation.move)) && animation.move.playerId === player.empire
   )
@@ -69,7 +71,7 @@ const ConstructionArea: FunctionComponent<{ game: GameView, gameOver: boolean, p
       isValidTarget: monitor.getItemType() === DragObjectType.DEVELOPMENT_FROM_DRAFT_AREA,
       isOver: monitor.isOver()
     }),
-    drop: (item: DevelopmentFromDraftArea) => slateForConstruction(player.empire, item.card)
+    drop: (item: DevelopmentFromDraftArea) => ({type: MoveType.SlateForConstruction, playerId: player.empire, card: item.card})
   })
 
   function getTransform(card: number, index: number) {
@@ -110,7 +112,9 @@ const ConstructionArea: FunctionComponent<{ game: GameView, gameOver: boolean, p
       )}
       {isPlayer(player) && !gameOver && construction.costSpaces.map((item, index) => {
         if (!item) return null
-        const move = isResource(item) ? placeResource(player.empire, item, construction.card, index) : placeCharacter(player.empire, item, construction.card, index)
+        const move: PlaceResourceOnConstruction | PlaceCharacter = isResource(item) ?
+          {type: MoveType.PlaceResource, playerId: player.empire, resource: item, card: construction.card, space: index} :
+          {type: MoveType.PlaceCharacter, playerId: player.empire, character: item, card: construction.card, space: index}
         if (!canUndo(move)) return null
         return (
           <button key={index} css={[itemButtonStyle, undoPlaceItemButton, itemButtonPosition(index)]}
@@ -132,7 +136,7 @@ const ConstructionArea: FunctionComponent<{ game: GameView, gameOver: boolean, p
           onClick={() => build(construction)}>{t('Build')}</button>
         }
         <button css={[textButton, textButtonRight, recyclingButton(developmentCards[construction.card].recyclingBonus)]}
-                onClick={() => play(recycle(player.empire, construction.card))}>
+                onClick={() => play({type: MoveType.Recycle, playerId: player.empire, card: construction.card})}>
           {t('Recycle')}
         </button>
       </>}
@@ -175,15 +179,15 @@ function getSmartPlaceItemMoves(player: Player, construction: Construction): (Pl
   getRemainingCost(construction).forEach(cost => {
     if (isResource(cost.item)) {
       if (availableResource.some(resource => resource === cost.item)) {
-        moves.push(placeResource(player.empire, cost.item, construction.card, cost.space))
+        moves.push({type: MoveType.PlaceResource, playerId: player.empire, resource: cost.item, card: construction.card, space: cost.space})
         availableResource.splice(availableResource.findIndex(resource => resource === cost.item), 1)
       } else if (availableKrystalliumPerResource[cost.item] > 0) {
-        moves.push(placeResource(player.empire, Resource.Krystallium, construction.card, cost.space))
+        moves.push({type: MoveType.PlaceResource, playerId: player.empire, resource: Resource.Krystallium, card: construction.card, space: cost.space})
         availableKrystalliumPerResource[cost.item]--
       }
     } else {
       if (availableCharacters[cost.item] > 0) {
-        moves.push(placeCharacter(player.empire, cost.item, construction.card, cost.space))
+        moves.push({type: MoveType.PlaceCharacter, playerId: player.empire, character: cost.item, card: construction.card, space: cost.space})
         availableCharacters[cost.item]--
       }
     }

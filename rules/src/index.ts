@@ -1,1 +1,1 @@
-export {default as Rules} from './Rules'
+export {default} from './Rules'

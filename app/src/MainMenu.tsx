@@ -1,13 +1,14 @@
 /** @jsxImportSource @emotion/react */
-import {css, keyframes, useTheme } from '@emotion/react'
+import {css, keyframes, useTheme} from '@emotion/react'
 import {
   faChess, faChevronDown, faChevronUp, faClock, faCompress, faExpand, faFastBackward, faHome, faMoon, faSignOutAlt, faSun, faUndoAlt, faVolumeMute, faVolumeUp
 } from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import GameView from '@gamepark/its-a-wonderful-world/GameView'
+import ItsAWonderfulWorldView from '@gamepark/its-a-wonderful-world/ItsAWonderfulWorldView'
 import EmpireName from '@gamepark/its-a-wonderful-world/material/EmpireName'
 import Move from '@gamepark/its-a-wonderful-world/moves/Move'
-import Rules, {isOver} from '@gamepark/its-a-wonderful-world/Rules'
+import {isOver} from '@gamepark/its-a-wonderful-world/Rules'
 import {useActions, useGame, usePlayerId, usePlayers, useRematch, useSound, useUndo} from '@gamepark/react-client'
 import fscreen from 'fscreen'
 import NoSleep from 'nosleep.js'
@@ -34,7 +35,7 @@ const MainMenu = () => {
   const game = useGame<GameView>()
   const actions = useActions<Move, EmpireName>()
   const nonGuaranteedUndoPending = actions?.some(action => action.cancelled && action.cancelPending && !action.animation && !action.delayed)
-  const [undo, canUndo] = useUndo(Rules)
+  const [undo, canUndo] = useUndo(ItsAWonderfulWorldView)
   const playerId = usePlayerId<EmpireName>()
   const {t} = useTranslation()
   const theme = useTheme()
@@ -101,7 +102,7 @@ const MainMenu = () => {
               {displayRematchTooltip && <span css={tooltipStyle}>{t('Offer a friendly rematch')}</span>}
             </IconButton> :
             <IconButton css={[menuButtonStyle, undoButtonStyle]} title={t('Undo my last move')} aria-label={t('Undo my last move')}
-                        onClick={() => toggle.play() && undo()} disabled={!canUndo()}>
+                        onClick={() => toggle.play() && undo({delayed: !isPlaying})} disabled={!canUndo()}>
               {!actions || nonGuaranteedUndoPending ? <LoadingSpinner css={loadingSpinnerStyle}/> : <FontAwesomeIcon icon={faUndoAlt}/>}
             </IconButton>
         )
@@ -147,7 +148,7 @@ const MainMenu = () => {
         }
         {game && player && !quit && !isOver(game) &&
         <IconButton css={[menuButtonStyle, undoButtonStyle]}
-                    onClick={() => toggle.play() && undo()} disabled={!canUndo()}>
+                    onClick={() => toggle.play() && undo({delayed: !isPlaying})} disabled={!canUndo()}>
           <span css={subMenuTitle}>{t('Undo my last move')}</span>
           {!actions || nonGuaranteedUndoPending ? <LoadingSpinner css={loadingSpinnerStyle}/> : <FontAwesomeIcon icon={faUndoAlt}/>}
         </IconButton>

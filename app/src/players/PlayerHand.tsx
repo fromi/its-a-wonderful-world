@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import {css, keyframes} from '@emotion/react'
 import {developmentCards} from '@gamepark/its-a-wonderful-world/material/Developments'
-import ChooseDevelopmentCard, {chooseDevelopmentCard, isChooseDevelopmentCard} from '@gamepark/its-a-wonderful-world/moves/ChooseDevelopmentCard'
+import ChooseDevelopmentCard, {isChooseDevelopmentCard} from '@gamepark/its-a-wonderful-world/moves/ChooseDevelopmentCard'
 import MoveType from '@gamepark/its-a-wonderful-world/moves/MoveType'
 import {isPassCards, PassCardsView} from '@gamepark/its-a-wonderful-world/moves/PassCards'
 import {isRevealChosenCards, RevealChosenCardsView} from '@gamepark/its-a-wonderful-world/moves/RevealChosenCards'
@@ -48,7 +48,7 @@ const PlayerHand: FunctionComponent<Props> = ({player, players, round}) => {
         item: developmentFromHand(card),
         disabled: !canChooseCard,
         animation: {seconds: animation?.duration ?? 0.2},
-        drop: () => play(chooseDevelopmentCard(player.empire, card))
+        drop: () => play({type: MoveType.ChooseDevelopmentCard, playerId: player.empire, card})
       },
       css: passingCard ? getZIndexRevert(index) : ignore ? css`z-index: 10;` : undefined,
       animation: animation ? {
@@ -111,7 +111,9 @@ const PlayerHand: FunctionComponent<Props> = ({player, players, round}) => {
         <div css={popupBackgroundStyle} onClick={() => setFocusedCard(undefined)}/>
         <DevelopmentCard development={developmentCards[focusedCard]} css={focusCardStyle}/>
         {canChooseCard &&
-        <button css={[textButton, textButtonLeft, chooseCardButton]} onClick={() => play(chooseDevelopmentCard(player.empire, focusedCard))}>
+        <button css={[textButton, textButtonLeft, chooseCardButton]} onClick={() => play({
+          type: MoveType.ChooseDevelopmentCard, playerId: player.empire, card: focusedCard
+        })}>
           {t('Choose')}
         </button>}
         <FocusedDevelopmentOptions development={developmentCards[focusedCard]} onClose={() => setFocusedCard(undefined)}/>

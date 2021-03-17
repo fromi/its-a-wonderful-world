@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import {css} from '@emotion/react'
 import EmpireName from '@gamepark/its-a-wonderful-world/material/EmpireName'
-import {recycle} from '@gamepark/its-a-wonderful-world/moves/Recycle'
+import MoveType from '@gamepark/its-a-wonderful-world/moves/MoveType'
 import {FunctionComponent} from 'react'
 import {useDrop} from 'react-dnd'
 import {useTranslation} from 'react-i18next'
@@ -18,7 +18,7 @@ const RecyclingDropArea: FunctionComponent<{ empire: EmpireName }> = ({empire}) 
       isValidTarget: monitor.getItemType() === DragObjectType.DEVELOPMENT_FROM_DRAFT_AREA || monitor.getItemType() === DragObjectType.DEVELOPMENT_FROM_CONSTRUCTION_AREA,
       isOver: monitor.isOver()
     }),
-    drop: (item: DevelopmentFromDraftArea | DevelopmentFromConstructionArea) => recycle(empire, item.card)
+    drop: (item: DevelopmentFromDraftArea | DevelopmentFromConstructionArea) => ({type: MoveType.Recycle, playerId: empire, card: item.card})
   })
   return (
     <div ref={ref} css={getStyle(isValidTarget, isOver)}>

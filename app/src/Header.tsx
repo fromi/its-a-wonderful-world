@@ -10,7 +10,7 @@ import Resource from '@gamepark/its-a-wonderful-world/material/Resource'
 import {isCompleteConstruction} from '@gamepark/its-a-wonderful-world/moves/CompleteConstruction'
 import Move from '@gamepark/its-a-wonderful-world/moves/Move'
 import MoveType from '@gamepark/its-a-wonderful-world/moves/MoveType'
-import {isReceiveCharacter, receiveCharacter} from '@gamepark/its-a-wonderful-world/moves/ReceiveCharacter'
+import {isReceiveCharacter} from '@gamepark/its-a-wonderful-world/moves/ReceiveCharacter'
 import Phase from '@gamepark/its-a-wonderful-world/Phase'
 import Player from '@gamepark/its-a-wonderful-world/Player'
 import {countCharacters, getNextProductionStep, getPlayerName, getScore, isOver, numberOfRounds} from '@gamepark/its-a-wonderful-world/Rules'
@@ -161,9 +161,13 @@ function getText(t: TFunction, validate: () => void, play: (move: Move) => void,
         } else if (player.bonuses.some(bonus => bonus === 'CHOOSE_CHARACTER')) {
           return <Trans defaults="Receive a Financier <0/> or a General <1/> (Science Supremacy Bonus)"
                         components={[
-                          <CharacterToken character={Character.Financier} onClick={() => play(receiveCharacter(player.empire, Character.Financier))}
+                          <CharacterToken character={Character.Financier} onClick={() => play({
+                            type: MoveType.ReceiveCharacter, playerId: player.empire, character: Character.Financier
+                          })}
                                           css={characterTokenStyle}/>,
-                          <CharacterToken character={Character.General} onClick={() => play(receiveCharacter(player.empire, Character.General))}
+                          <CharacterToken character={Character.General} onClick={() => play({
+                            type: MoveType.ReceiveCharacter, playerId: player.empire, character: Character.General
+                          })}
                                           css={characterTokenStyle}/>
                         ]}/>
         } else if (game.productionStep !== Resource.Exploration) {

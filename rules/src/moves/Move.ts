@@ -20,4 +20,5 @@ type Move = DealDevelopmentCards | ChooseDevelopmentCard | RevealChosenCards | P
 
 export default Move
 
-export type MoveView = Move | DealDevelopmentCardsView | ChooseDevelopmentCardView | RevealChosenCardsView | PassCardsView | DiscardLeftoverCardsView
+export type MoveView = Exclude<Move, RevealChosenCards | DiscardLeftoverCards>
+  | DealDevelopmentCardsView | ChooseDevelopmentCardView | RevealChosenCardsView | PassCardsView | DiscardLeftoverCardsView

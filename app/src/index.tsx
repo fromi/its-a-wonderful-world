@@ -1,3 +1,4 @@
+import ItsAWonderfulWorldView from '@gamepark/its-a-wonderful-world/ItsAWonderfulWorldView'
 import Rules from '@gamepark/its-a-wonderful-world/Rules'
 import {createGameStore, setupTranslation} from '@gamepark/react-client'
 import {StrictMode} from 'react'
@@ -16,7 +17,7 @@ setupTranslation(translations)
 ReactDOM.render(
   <StrictMode>
     <Provider store={createGameStore('its-a-wonderful-world', Rules, {
-      animations: ItsAWonderfulAnimations, tutorial: ItsAWonderfulTutorial, ai
+      gameViewCreator: ItsAWonderfulWorldView, animations: ItsAWonderfulAnimations, tutorial: ItsAWonderfulTutorial, ai
     })}>
       <App/>
     </Provider>

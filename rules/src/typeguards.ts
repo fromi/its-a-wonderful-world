@@ -1,9 +1,9 @@
-import Game from './Game'
+import GameState from './GameState'
 import GameView from './GameView'
 import Player from './Player'
 import PlayerView from './PlayerView'
 
-export function isGameView(game: Game | GameView): game is GameView {
+export function isGameView(game: GameState | GameView): game is GameView {
   return typeof game.deck === 'number'
 }
 

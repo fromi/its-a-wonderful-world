@@ -2,7 +2,7 @@ import Resource from './material/Resource'
 import Phase from './Phase'
 import Player from './Player'
 
-type Game = {
+type GameState = {
   players: Player[]
   deck: number[]
   discard: number[]
@@ -12,4 +12,4 @@ type Game = {
   tutorial?: boolean
 }
 
-export default Game
+export default GameState
